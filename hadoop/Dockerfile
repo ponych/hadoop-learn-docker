@@ -1,4 +1,4 @@
-FROM base:latest
+FROM ponych/base:latest
 MAINTAINER ponych <ponych@qq.com>
 WORKDIR /root
 
