@@ -6,6 +6,9 @@ WORKDIR /root
 
 RUN apt-get install -y openssh-server openjdk-8-jdk wget
 
+# for debugging
+RUN apt-get install net-tools telnet iputils-ping -y
+
 ENV hadoop hadoop-2.8.1
 
 RUN wget http://172.17.0.1/${hadoop}.tar.gz && \
@@ -17,6 +20,15 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:$JAVA_HOME/bin
 
+# ssh without key
+RUN ssh-keygen -t rsa -f ~/.ssh/id_rsa -P '' &&  \
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+
+RUN mkdir -p ~/hdfs/namenode && \
+    mkdir -p ~/hdfs/datanode && \
+    mkdir $HADOOP_HOME/logs
+
 COPY config/* /tmp/
 
 RUN mv /tmp/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
@@ -26,8 +38,11 @@ RUN mv /tmp/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
     mv /tmp/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml && \
     mv /tmp/slaves $HADOOP_HOME/etc/hadoop/slaves && \
     mv /tmp/start-hadoop.sh ~/start-hadoop.sh && \
-    mv /tmp/run-wordcount.sh ~/run-wordcount.sh
+    mv /tmp/run-wordcount.sh ~/run-wordcount.sh && \
+    mv /tmp/ssh_config ~/.ssh/config
 
+
+# chmod file to be runable
 RUN chmod +x ~/start-hadoop.sh && \
     chmod +x ~/run-wordcount.sh && \
     chmod +x $HADOOP_HOME/sbin/start-dfs.sh && \
