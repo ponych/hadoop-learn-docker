@@ -9,7 +9,7 @@ RUN apt-get install -y openssh-server openjdk-8-jdk wget
 # for debugging
 RUN apt-get install net-tools telnet iputils-ping -y
 
-ENV hadoop hadoop-2.8.1
+ENV hadoop hadoop-2.9.0
 
 RUN wget http://172.17.0.1/${hadoop}.tar.gz && \
     tar -xzf ${hadoop}.tar.gz && \
@@ -41,6 +41,7 @@ RUN mv /tmp/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
     mv /tmp/run-wordcount.sh ~/run-wordcount.sh && \
     mv /tmp/ssh_config ~/.ssh/config
 
+RUN sed -i "s,__java_home__,$JAVA_HOME,g" $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 
 # chmod file to be runable
 RUN chmod +x ~/start-hadoop.sh && \

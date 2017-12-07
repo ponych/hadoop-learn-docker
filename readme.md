@@ -27,6 +27,7 @@ $docker network ls # 查看现有网络，如果存在了 hadoop 就不用新建
 $docker network create --driver=bridge hadoop
 $docker network ls # 查看网络
 $./start-container.sh
+docker 
 ```
 
 
